@@ -36,7 +36,7 @@ for i, (label_filename, img_filename) in enumerate(zip(label_filenames, img_file
         label = np.expand_dims(label, axis=2)
         img = fn.read_img(conf.image_dir+img_filename)
         #img = skimage.measure.block_reduce(img, (2,2), np.max)
-        img = np.expand_dims(img, axis=2)
+        #img = np.expand_dims(img, axis=2)
         fn.save_slices(i, img, label, split, **conf)
 
 print("Saving slices completed!!!")
