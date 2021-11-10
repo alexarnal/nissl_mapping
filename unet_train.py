@@ -21,9 +21,8 @@ if __name__ == "__main__":
     data_dir = pathlib.Path(conf.data_dir)
     class_name = conf.class_name
     run_name = conf.run_name
-    #processed_dir = data_dir / "processed"
-    processed_dir = data_dir
-    loaders = fetch_loaders(processed_dir, conf.batch_size, conf.use_channels, val_folder = 'valid')
+    processed_dir = data_dir / "processed"
+    loaders = fetch_loaders(processed_dir, conf.batch_size, conf.use_channels)
     loss_fn = fn.get_loss(conf.model_opts.args.outchannels, conf.loss_opts)            
     frame = Framework(
         loss_fn = loss_fn,

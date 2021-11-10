@@ -1,23 +1,23 @@
-data_dir: "/datadrive/original_fx_res_1.0_v3/"
+data_dir: "/data/baryal/coastal_mapping/original_fx_res_1.0_v3"
 class_name: "Fornix"
 batch_size: 8
-run_name: "b_dice_unaugmented"
-epochs: 101
+run_name: "b_custom"
+epochs: 201
 save_every: None
-use_channels: [0,1,2]
+use_channels: [0]
 loss_opts:
-  name: "dice"
+  name: "custom"
   masked: True
-  weights: [0.1, 0.9]
+  weights: [0.3, 0.7]
   label_smoothing: 0.1
 model_opts:
   args: 
-    inchannels: 3
+    inchannels: 1
     outchannels: 2
     net_depth: 4
     dropout: 0.2
     spatial: True
-    first_channel_output: 32
+    first_channel_output: 64
 optim_opts:
   name: "Adam"
   args:

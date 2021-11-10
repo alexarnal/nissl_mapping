@@ -25,13 +25,12 @@ def fetch_loaders(processed_dir, batch_size=32, use_channels=[0,1],
     """
     normalize = False
     train_dataset = CoastalDataset(processed_dir / train_folder, use_channels, normalize,
-                                    #transforms = transforms.Compose([
-                                    #           DropoutChannels(1),
+                                    transforms = transforms.Compose([
                                     #           FlipHorizontal(0.3),
                                     #           FlipVertical(0.3),
                                     #           Rot270(0.3),
                                     #           Cut(0.5)
-                                    #       ])
+                                           ])
                                     )
     val_dataset = CoastalDataset(processed_dir / val_folder, use_channels, normalize)
     
@@ -60,8 +59,8 @@ class CoastalDataset(Dataset):
             folder_path(str): A path to data directory
         """
 
-        self.img_files = glob.glob(os.path.join(folder_path, '*tiff*'))[:1000]
-        self.mask_files = [s.replace("tiff", "mask") for s in self.img_files]
+        self.img_files = glob.glob(os.path.join(folder_path, '*img*'))
+        self.mask_files = [s.replace("img", "label") for s in self.img_files]
         self.use_channels = use_channels
         self.normalize = normalize
         self.transforms = transforms
@@ -84,7 +83,6 @@ class CoastalDataset(Dataset):
         if self.normalize:
             data = (data - self.mean) / self.std
         label = np.load(mask_path)
-        label = (label > 0.5).astype(np.uint8)
         zeros = label == 0
         ones = label == 1
         label = np.concatenate((zeros, ones), axis=2)

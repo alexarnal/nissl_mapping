@@ -186,4 +186,4 @@ class customloss(torch.nn.modules.loss._WeightedLoss):
         dice = 1 - ((2.0 * intersection + self.smooth) / (total_sum + self.smooth))
         dice = dice * self.w.to(device=dice.device)
 
-        return dice.sum() + 2 * ce
+        return 0.67*dice.sum() + 0.33*ce
