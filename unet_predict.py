@@ -7,7 +7,6 @@ Created on Sat Feb 26 2:57:34 2021
 """
 from segmentation.data.data import fetch_loaders
 from segmentation.model.frame import Framework
-from segmentation.data.slice import add_index
 import segmentation.model.functions as fn
 
 import yaml, pathlib, pickle, warnings, torch, matplotlib

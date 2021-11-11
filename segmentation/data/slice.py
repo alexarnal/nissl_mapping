@@ -22,6 +22,7 @@ def read_label(filename):
 def read_img(filename):
     img = mpimg.imread(filename)
     #x = np.mean(img, axis=2)
+    x = img
     return x
 
 def save_slices(filename, img, label, split, **conf):
