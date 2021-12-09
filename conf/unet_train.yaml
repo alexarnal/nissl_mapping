@@ -1,7 +1,7 @@
 data_dir: "/data/baryal/coastal_mapping/original_fx_res_1.0_v3"
 class_name: "Fornix"
 batch_size: 8
-run_name: "c_custom"
+run_name: "e_custom"
 epochs: 201
 save_every: None
 use_channels: [0,1,2]

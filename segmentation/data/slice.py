@@ -33,11 +33,15 @@ def save_slices(filename, img, label, split, **conf):
             slice = temp
         return slice
 
-    def filter_percentage(slice, percentage):
-        labelled_pixels = np.sum(slice)
-        total_pixels = slice.shape[0] * slice.shape[1]
+    def filter_percentage(img, label, percentage):
+        labelled_pixels = np.sum(label)
+        total_pixels = label.shape[0] * label.shape[1]
         if labelled_pixels/total_pixels < percentage:
-            if np.random.rand() <= 0.999:
+            randnum = np.random.rand()
+            threshold = 0.999
+            if np.std(img) <= 0.06 and np.mean(img) >= 0.8:
+                threshold = 0.8
+            if randnum <= threshold:
                 return False
         return True
 
@@ -52,10 +56,10 @@ def save_slices(filename, img, label, split, **conf):
         for column in range(0, img.shape[0], conf["window_size"][1]-conf["overlap"]):
             label_slice = label[row:row+conf["window_size"][0], column:column+conf["window_size"][1]]
             label_slice = verify_slice_size(label_slice, conf)
+            img_slice = img[row:row+conf["window_size"][0], column:column+conf["window_size"][1], :]
+            img_slice = verify_slice_size(img_slice, conf)
 
-            if filter_percentage(label_slice, conf["filter"]):
-                img_slice = img[row:row+conf["window_size"][0], column:column+conf["window_size"][1], :]
-                img_slice = verify_slice_size(img_slice, conf)
+            if filter_percentage(img_slice, label_slice, conf["filter"]):
                 save_slice(label_slice, conf["out_dir"]+split+"/label_"+str(filename)+"_slice_"+str(slicenum))
                 save_slice(img_slice, conf["out_dir"]+split+"/img_"+str(filename)+"_slice_"+str(slicenum))
                 print(f"Saved image {filename} slice {slicenum}")

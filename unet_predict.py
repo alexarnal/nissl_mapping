@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm 
 from addict import Dict
 import numpy as np
+from skimage.morphology import remove_small_objects, square, dilation
 import pdb
 
 top = cm.get_cmap('Oranges_r', 128)
@@ -68,7 +69,7 @@ if __name__ == "__main__":
             prediction = torch.nn.Softmax(3)(prediction)
             prediction = np.asarray(prediction.cpu()).squeeze()[:,:,1]
             #prediction[mask] = 0
-            prediction = (prediction > 0.3).astype(int)
+            #prediction = (prediction > 0.3).astype(int)
             endrow_dest = row+conf.window_size[0]
             endrow_source = conf.window_size[0]
             endcolumn_dest = column+conf.window_size[0]
@@ -85,6 +86,20 @@ if __name__ == "__main__":
                 print("Something wrong with indexing!")
             
     fig, plots = plt.subplots(nrows = 1, ncols=2, figsize=(20, 10))
+    images = [img, y]
+    titles = ["Image", "output"]
+
+    for i, graphs in enumerate(plots.flat):
+        im = graphs.imshow(images[i])
+        graphs.set_title(titles[i], fontsize=20)
+        graphs.axis('off')
+    plt.savefig(filename+"_output_no_postprocess.png")
+    plt.close(fig)
+
+    fig, plots = plt.subplots(nrows = 1, ncols=2, figsize=(20, 10))
+    y = (y > 0.8)
+    y = remove_small_objects(y, 30000).astype(int)
+    y = dilation(y, square(15)).astype(int)
     images = [img, y]
     titles = ["Image", "output"]
 
