@@ -11,9 +11,9 @@ import torch, pdb
 from torchvision.ops import sigmoid_focal_loss
 
 class diceloss(torch.nn.Module):
-    def __init__(self, act=torch.nn.Sigmoid(), smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
+    def __init__(self, smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
         super().__init__()
-        self.act = act
+        #self.act = act
         self.smooth = smooth
         self.w = torch.tensor(w)
         self.outchannels = outchannels
@@ -29,7 +29,7 @@ class diceloss(torch.nn.Module):
             mask = torch.ones((target.size()[0], target.size()[2], target.size()[3]), dtype=torch.bool)
         target = target * (1 - self.label_smoothing) + self.label_smoothing / self.outchannels
 
-        pred = self.act(pred).permute(0,2,3,1)
+        pred = pred.permute(0,2,3,1) #self.act(pred).permute(0,2,3,1)
         target = target.permute(0,2,3,1)
         intersection = (pred * target)[mask].sum(dim=0)
         A_sum = pred[mask].sum(dim=0)
@@ -41,9 +41,9 @@ class diceloss(torch.nn.Module):
         return dice.sum()
 
 class iouloss(torch.nn.Module):
-    def __init__(self, act=torch.nn.Sigmoid(), smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
+    def __init__(self, smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
         super().__init__()
-        self.act = act
+        #self.act = act
         self.smooth = smooth
         self.w = torch.tensor(w)
         self.outchannels = outchannels
@@ -59,7 +59,7 @@ class iouloss(torch.nn.Module):
             mask = torch.ones((target.size()[0], target.size()[2], target.size()[3]), dtype=torch.bool)
         target = target * (1 - self.label_smoothing) + self.label_smoothing / self.outchannels
 
-        pred = self.act(pred).permute(0,2,3,1)
+        pred = pred.permute(0,2,3,1) #self.act(pred).permute(0,2,3,1)
         target = target.permute(0,2,3,1)
         intersection = (pred * target)[mask].sum(dim=0)
         A_sum = pred[mask].sum(dim=0)
@@ -70,9 +70,9 @@ class iouloss(torch.nn.Module):
         return iou.sum()
 
 class celoss(torch.nn.Module):
-    def __init__(self, act=torch.nn.Sigmoid(), smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
+    def __init__(self, smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
         super().__init__()
-        self.act = act
+        #self.act = act
         self.smooth = smooth
         self.w = torch.tensor(w)
         self.outchannels = outchannels
@@ -88,14 +88,14 @@ class celoss(torch.nn.Module):
             mask = torch.ones((target.size()[0], target.size()[2], target.size()[3]), dtype=torch.bool)
         target = target * (1 - self.label_smoothing) + self.label_smoothing / self.outchannels
 
-        pred = self.act(pred)
+        #pred = self.act(pred)
         ce = torch.nn.CrossEntropyLoss(weight=self.w.to(device=pred.device))(pred, torch.argmax(target, dim=1).long())
         return ce
 
 class nllloss(torch.nn.Module):
-    def __init__(self, act=torch.nn.Sigmoid(), smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
+    def __init__(self, smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
         super().__init__()
-        self.act = act
+        #self.act = act
         self.smooth = smooth
         self.w = torch.tensor(w)
         self.outchannels = outchannels
@@ -111,15 +111,15 @@ class nllloss(torch.nn.Module):
             mask = torch.ones((target.size()[0], target.size()[2], target.size()[3]), dtype=torch.bool)
         target = target * (1 - self.label_smoothing) + self.label_smoothing / self.outchannels
 
-        pred = self.act(pred)
+        #pred = self.act(pred)
         nll = torch.nn.NLLLoss(weight=self.w.to(device=pred.device))(pred, torch.argmax(target, dim=1).long())
         return nll
 
 
 class senseloss(torch.nn.Module):
-    def __init__(self, act=torch.nn.Sigmoid(), smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
+    def __init__(self, smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False):
         super().__init__()
-        self.act = act
+        #self.act = act
         self.smooth = smooth
         self.w = torch.tensor(w)
         self.outchannels = outchannels
@@ -135,7 +135,7 @@ class senseloss(torch.nn.Module):
             mask = torch.ones((target.size()[0], target.size()[2], target.size()[3]), dtype=torch.bool)
         target = target * (1 - self.label_smoothing) + self.label_smoothing / self.outchannels
 
-        pred = self.act(pred).permute(0,2,3,1)
+        pred = pred.permute(0,2,3,1) #self.act(pred).permute(0,2,3,1)
         target = target.permute(0,2,3,1)
         intersection = (pred * target)[mask].sum(dim=0)
         A_sum = pred[mask].sum(dim=0)
@@ -147,7 +147,7 @@ class senseloss(torch.nn.Module):
 
 
 class focalloss(torch.nn.modules.loss._WeightedLoss):
-    def __init__(self, act=torch.nn.Sigmoid(), smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False, gamma=2):
+    def __init__(self, smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False, gamma=2):
         super().__init__()
 
     def forward(self, pred, target):
@@ -156,9 +156,9 @@ class focalloss(torch.nn.modules.loss._WeightedLoss):
 
 
 class customloss(torch.nn.modules.loss._WeightedLoss):
-    def __init__(self, act=torch.nn.Sigmoid(), smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False, gamma=2):
+    def __init__(self, smooth=1.0, w=[1.0], outchannels=1, label_smoothing=0, masked = False, gamma=2):
         super().__init__()
-        self.act = act
+        #self.act = act
         self.smooth = smooth
         self.w = torch.tensor(w)
         self.outchannels = outchannels
@@ -174,10 +174,10 @@ class customloss(torch.nn.modules.loss._WeightedLoss):
             mask = torch.ones((target.size()[0], target.size()[2], target.size()[3]), dtype=torch.bool)
         focal_loss = sigmoid_focal_loss(pred, target, alpha = -1, gamma = 2, reduction = "mean")
         target = target * (1 - self.label_smoothing) + self.label_smoothing / self.outchannels
-        _pred = self.act(pred)
-        ce = torch.nn.CrossEntropyLoss(weight=self.w.to(device=_pred.device))(_pred, torch.argmax(target, dim=1).long())
+        #_pred = self.act(pred)
+        ce = torch.nn.CrossEntropyLoss(weight=self.w.to(device=pred.device))(pred, torch.argmax(target, dim=1).long())
 
-        pred = self.act(pred).permute(0,2,3,1)
+        pred = pred.permute(0,2,3,1) #self.act(pred).permute(0,2,3,1)
         target = target.permute(0,2,3,1)
         intersection = (pred * target)[mask].sum(dim=0)
         A_sum = pred[mask].sum(dim=0)

@@ -186,7 +186,7 @@ class Framework:
             
         return y_hat
     
-    def act(self, logits):
+    '''def act(self, logits):
         """Applies activation function based on the model
         Args:
             y_hat: logits output
@@ -197,7 +197,7 @@ class Framework:
             y_hat = torch.nn.Softmax(3)(logits)
         else:
             y_hat = torch.sigmoid(logits)
-        return y_hat
+        return y_hat'''
 
     def load_state_dict(self, state_dict):
         self.model.load_state_dict(state_dict)

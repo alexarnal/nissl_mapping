@@ -149,7 +149,7 @@ def log_images(writer, frame, batch, epoch, stage):
     squash = lambda x: (x - x.min()) / (x.max() - x.min())
     x, y = batch
     y_mask = np.sum(y.cpu().numpy(), axis=3) == 0
-    y_hat = frame.act(frame.infer(x))
+    y_hat = frame.infer(x) #frame.act(frame.infer(x)) #
     y = np.argmax(y.cpu().numpy(), axis=3) + 1
     #y_hat = np.argmax(y_hat.cpu().numpy(), axis=3) + 1
     y_hat = y_hat.cpu().numpy()[:,:,:,1][:,:,:,None]
@@ -180,22 +180,22 @@ def get_loss(outchannels, opts=None):
     else:
         label_smoothing = opts.label_smoothing
     if opts.name == "dice":
-        loss_fn = diceloss(act=torch.nn.Softmax(dim=1), w=loss_weight,
+        loss_fn = diceloss(w=loss_weight,
                             outchannels=outchannels, label_smoothing=label_smoothing, masked=opts.masked)
     elif opts.name == "iou":
-        loss_fn = iouloss(act=torch.nn.Softmax(dim=1), w=loss_weight, 
+        loss_fn = iouloss(w=loss_weight, 
                             outchannels=outchannels, masked = opts.masked)
     elif opts.name == "ce":
-        loss_fn = celoss(act=torch.nn.Softmax(dim=1), w=loss_weight, 
+        loss_fn = celoss(w=loss_weight, 
                             outchannels=outchannels, masked = opts.masked)
     elif opts.name == "nll":
-        loss_fn = nllloss(act=torch.nn.Softmax(dim=1), w=loss_weight, 
+        loss_fn = nllloss(w=loss_weight, 
                             outchannels=outchannels, masked = opts.masked)
     elif opts.name == "focal":
-        loss_fn = focalloss(act=torch.nn.Softmax(dim=1), w=loss_weight, 
+        loss_fn = focalloss(w=loss_weight, 
                             outchannels=outchannels, masked = opts.masked)
     elif opts.name == "custom":
-        loss_fn = customloss(act=torch.nn.Softmax(dim=1), w=loss_weight, 
+        loss_fn = customloss(w=loss_weight, 
                             outchannels=outchannels, masked = opts.masked)                  
     else:
         raise ValueError("Loss must be defined!")

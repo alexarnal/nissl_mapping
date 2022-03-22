@@ -28,7 +28,8 @@ if __name__ == "__main__":
         loss_fn = loss_fn,
         model_opts=conf.model_opts,
         optimizer_opts=conf.optim_opts,
-        reg_opts=conf.reg_opts
+        reg_opts=conf.reg_opts,
+        device=conf.device
     )
 
     if conf.fine_tune:
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     
     fn.print_conf(conf)
     fn.log(logging.INFO, "# Training Instances = {}, # Validation Instances = {}".format(len(loaders["train"]), len(loaders["val"])))
-
+    allValLosses = []
     for epoch in range(conf.epochs):
         # train loop
         loss = {}
@@ -71,6 +72,10 @@ if __name__ == "__main__":
             fn.log_images(writer, frame, loaders["val"], epoch, "val")
 
         writer.add_scalars("Loss", loss, epoch)
+        if epoch > 0 and loss['val'] < min(allValLosses):
+            frame.save(out_dir, "bestVal")
+            print("\nSaving bestVal Model at epoch %s\n"%epoch)
+        allValLosses.append(loss['val'])
         # Save model
         # if epoch % conf.save_every == 0:
         #     frame.save(out_dir, epoch)

@@ -1,8 +1,9 @@
+device: 1 #cuda 0 1 2 3 cpu
 data_dir: "/data/alex/original_torch"
 class_name: "Fornix"
 batch_size: 8
-run_name: "alex_testing"
-epochs: 201
+run_name: "alex_testing_1.3"
+epochs: 151
 save_every: None
 use_channels: [0,1,2]
 loss_opts:
@@ -18,6 +19,7 @@ model_opts:
     dropout: 0.2
     spatial: True
     first_channel_output: 16
+    output_act: 'softmax' #works with 'softmax' and 'sigmoid' and None
 optim_opts:
   name: "Adam"
   args:

@@ -13,6 +13,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+def get_act(act_name):
+    if act_name is None:
+        return act_name
+    if act_name == "sigmoid":
+        return torch.nn.Sigmoid()
+    elif act_name == "softmax":
+        return torch.nn.Softmax(dim=1)
+    else:
+        return None #raise ValueError("Output Activation must be defined!")
+
 class ConvBlock(nn.Module):
     """
     Single Encoder Block
@@ -67,11 +77,12 @@ class Unet(nn.Module):
     Combines the encoder and decoder blocks with skip connections, to arrive at
     a U-Net model.
     """
-    def __init__(self, inchannels, outchannels, net_depth, dropout = 0.2, spatial = False, first_channel_output=16):
+    def __init__(self, inchannels, outchannels, net_depth, dropout = 0.2, spatial = False, first_channel_output=16, output_act=None):
         super().__init__()
         self.downblocks = nn.ModuleList()
         self.upblocks = nn.ModuleList()
         self.pool = nn.MaxPool2d(2, 2)
+        self.output_act = get_act(output_act)
 
         in_channels = inchannels
         out_channels = first_channel_output
@@ -101,4 +112,8 @@ class Unet(nn.Module):
 
         for layer in self.upblocks:
             x = layer(x, decoder_outputs.pop())
-        return self.seg_layer(x)
+        
+        x = self.seg_layer(x)
+
+        if self.output_act == None: return x
+        return self.output_act(x)

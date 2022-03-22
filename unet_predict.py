@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm 
 from addict import Dict
 import numpy as np
-from skimage.morphology import remove_small_objects, square, dilation
+#from skimage.morphology import remove_small_objects, square, dilation
 import pdb
 
 top = cm.get_cmap('Oranges_r', 128)
@@ -34,18 +34,20 @@ matplotlib.rc('font', **font)
 if __name__ == "__main__":
     conf = Dict(yaml.safe_load(open('./conf/unet_predict.yaml')))
     data_dir = pathlib.Path(conf.data_dir)
-    img_path = data_dir / "test_full" / conf.filename
-    model_path = data_dir / "runs" / conf.run_name / "models" / "model_final.pt"
+    img_path = data_dir / "test/images" / conf.filename
+    model_path = data_dir / "runs" / conf.run_name / "models" / "model_bestVal.pt"
+    print(f'Loading Image')  
     img = mpimg.imread(img_path)
     loss_fn = fn.get_loss(conf.model_opts.args.outchannels)    
-        
+    print(f'Creating Unet Instance')    
     frame = Framework(
         loss_fn = loss_fn,
         model_opts=conf.model_opts,
         optimizer_opts=conf.optim_opts,
-        reg_opts=conf.reg_opts
+        reg_opts=conf.reg_opts,
+        device=conf.device
     )
-
+    print(f'Loading model {conf.run_name}')
     if torch.cuda.is_available():
         state_dict = torch.load(model_path)
     else:
@@ -56,7 +58,8 @@ if __name__ == "__main__":
     x = np.expand_dims(img, axis=0)
     y = np.zeros((x.shape[1], x.shape[2]))
     x = torch.from_numpy(x).float()
-    
+
+    print(f'Spliting Image & Predicting')
     for row in range(0, x.shape[1], conf.window_size[0]):
         for column in range(0, x.shape[2], conf.window_size[1]):
             current_slice = x[:, row:row+conf["window_size"][0], column:column+conf["window_size"][1], :]
@@ -66,7 +69,7 @@ if __name__ == "__main__":
                 current_slice = torch.from_numpy(temp).float()
             #mask = current_slice.squeeze()[:,:,:3].sum(dim=2) == 0
             prediction = frame.infer(current_slice)
-            prediction = torch.nn.Softmax(3)(prediction)
+            #prediction = torch.nn.Softmax(3)(prediction)
             prediction = np.asarray(prediction.cpu()).squeeze()[:,:,1]
             #prediction[mask] = 0
             #prediction = (prediction > 0.3).astype(int)
@@ -85,6 +88,7 @@ if __name__ == "__main__":
             except Exception as e:
                 print("Something wrong with indexing!")
             
+    print('Saving')
     fig, plots = plt.subplots(nrows = 1, ncols=2, figsize=(20, 10))
     images = [img, y]
     titles = ["Image", "output"]
@@ -97,15 +101,16 @@ if __name__ == "__main__":
     plt.close(fig)
 
     fig, plots = plt.subplots(nrows = 1, ncols=2, figsize=(20, 10))
-    y = (y > 0.8)
+    '''y = (y > 0.8)
     y = remove_small_objects(y, 30000).astype(int)
-    y = dilation(y, square(15)).astype(int)
+    y = dilation(y, square(15)).astype(int)'''
     images = [img, y]
     titles = ["Image", "output"]
-
+    plt.imsave(filename+"_prediction_"+conf.run_name+".png",y,cmap="gray")
     for i, graphs in enumerate(plots.flat):
         im = graphs.imshow(images[i])
         graphs.set_title(titles[i], fontsize=20)
         graphs.axis('off')
     plt.savefig(filename+"_output.png")
     plt.close(fig)
+    print('Done')
