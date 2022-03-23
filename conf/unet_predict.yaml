@@ -11,10 +11,4 @@ model_opts:
     spatial: True
     first_channel_output: 16
     output_act: 'sigmoid' #works with 'softmax' and 'sigmoid' and None
-#optim_opts:
-#  name: "Adam"
-#  args:
-#    lr: 0.001
-#reg_opts:
-#  l1_reg: 0.0005
 window_size: [512, 512]
