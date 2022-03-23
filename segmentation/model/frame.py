@@ -24,7 +24,7 @@ class Framework:
 
     """
 
-    def __init__(self, loss_fn, model_opts=None, optimizer_opts=None,
+    def __init__(self, loss_fn=None, model_opts=None, optimizer_opts=None,
                  reg_opts=None, device=None):
         """
         Set Class Attrributes
@@ -37,7 +37,7 @@ class Framework:
             optimizer_opts = {"name": "Adam", "args": {"lr": 0.001}}
         self.multi_class = True if model_opts.args.outchannels > 1 else False
         self.num_classes = model_opts.args.outchannels    
-        self.loss_fn = loss_fn.to(self.device)
+        self.loss_fn = None if loss_fn==None else loss_fn.to(self.device)
         self.model = Unet(**model_opts.args).to(self.device)
         optimizer_def = getattr(torch.optim, optimizer_opts["name"])
         self.optimizer = optimizer_def(self.model.parameters(), **optimizer_opts["args"])

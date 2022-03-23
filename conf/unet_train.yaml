@@ -2,7 +2,7 @@ device: 1 #cuda 0 1 2 3 cpu
 data_dir: "/data/alex/original_torch"
 class_name: "Fornix"
 batch_size: 8
-run_name: "alex_testing_1.3"
+run_name: "alex_testing_2.4"
 epochs: 151
 save_every: None
 use_channels: [0,1,2]
@@ -19,7 +19,7 @@ model_opts:
     dropout: 0.2
     spatial: True
     first_channel_output: 16
-    output_act: 'softmax' #works with 'softmax' and 'sigmoid' and None
+    output_act: 'sigmoid' #works with 'softmax' and 'sigmoid' and None
 optim_opts:
   name: "Adam"
   args:
@@ -29,5 +29,5 @@ log_opts:
 metrics_opts: ["IoU", "precision", "recall"]
 grad_accumulation_steps: None
 fine_tune: False
-reg_opts:
-  l1_reg: 0.00001
+#reg_opts:
+#  l1_reg: 0.00001

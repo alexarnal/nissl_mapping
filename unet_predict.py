@@ -20,6 +20,20 @@ import numpy as np
 #from skimage.morphology import remove_small_objects, square, dilation
 import pdb
 
+def verifyDims(img, slice_hw):
+    new_dim = list(img.shape)
+    if img.shape[0] % slice_hw[0] !=0: new_dim[0]=(img.shape[0]//slice_hw[0] + 1)*slice_hw[0]
+    if img.shape[1] % slice_hw[1] !=0: new_dim[1]=(img.shape[1]//slice_hw[1] + 1)*slice_hw[1]
+    if new_dim != img.shape:
+        print(f'New canvas dimensions: {new_dim}')
+        temp = np.zeros(new_dim)
+        temp[0:img.shape[0],0:img.shape[1]] = img
+        return temp
+    return img
+
+def O(I,F,P,S):
+    return (I-F+P)//S + 1
+
 top = cm.get_cmap('Oranges_r', 128)
 bottom = cm.get_cmap('Blues', 128)
 newcolors = np.vstack((top(np.linspace(0, 0.7, 128)),
@@ -38,13 +52,14 @@ if __name__ == "__main__":
     model_path = data_dir / "runs" / conf.run_name / "models" / "model_bestVal.pt"
     print(f'Loading Image')  
     img = mpimg.imread(img_path)
-    loss_fn = fn.get_loss(conf.model_opts.args.outchannels)    
+    _img = verifyDims(img, conf["window_size"])
+    #loss_fn = fn.get_loss(conf.model_opts.args.outchannels)    
     print(f'Creating Unet Instance')    
     frame = Framework(
-        loss_fn = loss_fn,
+        #loss_fn = loss_fn,
         model_opts=conf.model_opts,
-        optimizer_opts=conf.optim_opts,
-        reg_opts=conf.reg_opts,
+        #optimizer_opts=conf.optim_opts,
+        #reg_opts=conf.reg_opts,
         device=conf.device
     )
     print(f'Loading model {conf.run_name}')
@@ -55,38 +70,40 @@ if __name__ == "__main__":
 
     frame.load_state_dict(state_dict)
     filename = conf.filename.split(".")[0]
-    x = np.expand_dims(img, axis=0)
-    y = np.zeros((x.shape[1], x.shape[2]))
+    x = np.expand_dims(_img, axis=0)
+    #y = np.zeros((x.shape[1], x.shape[2]))
     x = torch.from_numpy(x).float()
 
     print(f'Spliting Image & Predicting')
-    for row in range(0, x.shape[1], conf.window_size[0]):
-        for column in range(0, x.shape[2], conf.window_size[1]):
-            current_slice = x[:, row:row+conf["window_size"][0], column:column+conf["window_size"][1], :]
+    crop = 128 #for stitching purposes
+    row_stride=conf.window_size[0]-(2*crop)
+    col_stride=conf.window_size[1]-(2*crop)
+    out_height, out_width = O(_img.shape[0],conf["window_size"][0],0,row_stride), O(_img.shape[1],conf["window_size"][0],0,col_stride)
+    new_height = row_stride * (out_height-1) + conf["window_size"][0]
+    new_width = col_stride * (out_width-1) + conf["window_size"][1]
+    y = np.zeros((new_height,new_width))
+    for i in range(out_height):
+        row = i*row_stride 
+        for j in range(out_width):
+            col = j*col_stride
+            # ind = col*row + col
+            current_slice = x[:, row:row+conf["window_size"][0], col:col+conf["window_size"][1], :]
             if current_slice.shape[1] != conf.window_size[0] or current_slice.shape[2] != conf.window_size[1]:
                 temp = np.zeros((1, conf.window_size[0], conf.window_size[1], x.shape[3]))
                 temp[:, :current_slice.shape[1], :current_slice.shape[2], :] =  current_slice
                 current_slice = torch.from_numpy(temp).float()
-            #mask = current_slice.squeeze()[:,:,:3].sum(dim=2) == 0
             prediction = frame.infer(current_slice)
-            #prediction = torch.nn.Softmax(3)(prediction)
             prediction = np.asarray(prediction.cpu()).squeeze()[:,:,1]
-            #prediction[mask] = 0
-            #prediction = (prediction > 0.3).astype(int)
-            endrow_dest = row+conf.window_size[0]
-            endrow_source = conf.window_size[0]
-            endcolumn_dest = column+conf.window_size[0]
-            endcolumn_source = conf.window_size[1]
-            if endrow_dest > y.shape[0]:
-                endrow_source = y.shape[0] - row
-                endrow_dest = y.shape[0]
-            if endcolumn_dest > y.shape[1]:
-                endcolumn_source = y.shape[1] - column
-                endcolumn_dest = y.shape[1]
-            try:
-                y[row:endrow_dest, column:endcolumn_dest] = prediction[0:endrow_source, 0:endcolumn_source]
-            except Exception as e:
-                print("Something wrong with indexing!")
+            if i == 0 and j==0:
+                y[row:row+conf.window_size[0],col:col+conf.window_size[1]]= prediction
+            elif i == 0 and j!=0:
+                y[row:row+conf.window_size[0],col+crop:col+conf.window_size[1]]= prediction[:,crop:] 
+            elif i != 0 and j==0:
+                y[row+crop:row+conf.window_size[0],col:col+conf.window_size[1]]= prediction[crop:,:] 
+            elif i != 0 and j!=0:
+                y[row+crop:row+conf.window_size[0],col+crop:col+conf.window_size[1]]= prediction[crop:,crop:] 
+    
+    y = y[0:img.shape[0],0:img.shape[1]]
             
     print('Saving')
     fig, plots = plt.subplots(nrows = 1, ncols=2, figsize=(20, 10))

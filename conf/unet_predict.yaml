@@ -1,6 +1,6 @@
 device: 0 #cuda 0 1 2 3 cpu
 data_dir: '/data/alex/original_torch'
-run_name: 'alex_testing_1.3'
+run_name: 'alex_testing_2.1'
 filename: 'lvl25.png'
 model_opts:
   args: 
@@ -10,11 +10,11 @@ model_opts:
     dropout: 0.00000001 #a drop out of 0 will give consistent results every time, but nn.Dropout2d(p=dropout) does not take p=0
     spatial: True
     first_channel_output: 16
-    output_act: 'softmax' #works with 'softmax' and 'sigmoid' and None'
-optim_opts:
-  name: "Adam"
-  args:
-    lr: 0.001
-reg_opts:
-  l1_reg: 0.0005
+    output_act: 'sigmoid' #works with 'softmax' and 'sigmoid' and None
+#optim_opts:
+#  name: "Adam"
+#  args:
+#    lr: 0.001
+#reg_opts:
+#  l1_reg: 0.0005
 window_size: [512, 512]

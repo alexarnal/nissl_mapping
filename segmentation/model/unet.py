@@ -42,10 +42,10 @@ class ConvBlock(nn.Module):
                 self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, x):
-        x = F.relu(self.conv1(x))
+        x = F.elu(self.conv1(x))
         x = self.dropout(x)
-        x = F.relu(self.conv2(x))
-        x = self.dropout(x)
+        x = F.elu(self.conv2(x))
+        #x = self.dropout(x)
         return x
 
 
