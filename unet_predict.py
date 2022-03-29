@@ -51,7 +51,7 @@ if __name__ == "__main__":
     img_path = data_dir / "test/images" / conf.filename
     model_path = data_dir / "runs" / conf.run_name / "models" / "model_bestVal.pt"
     print(f'Loading Image')  
-    img = mpimg.imread(img_path)
+    img = mpimg.imread(img_path) #need to add verifyChannelSize()
     _img = verifyDims(img, conf["window_size"])
     #loss_fn = fn.get_loss(conf.model_opts.args.outchannels)    
     print(f'Creating Unet Instance')    
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     x = torch.from_numpy(x).float()
 
     print(f'Spliting Image & Predicting')
-    crop = 128 #for stitching purposes
+    crop = conf["window_size"][0]//4 #for stitching purposes
     row_stride=conf.window_size[0]-(2*crop)
     col_stride=conf.window_size[1]-(2*crop)
     out_height, out_width = O(_img.shape[0],conf["window_size"][0],0,row_stride), O(_img.shape[1],conf["window_size"][0],0,col_stride)
