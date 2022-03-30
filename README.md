@@ -1,5 +1,5 @@
 # Nissl Mapping
-## _Estimate brain regions from imagaes of Nissl-stained rat brain tissue_
+## _Estimate brain regions from images of Nissl-stained rat brain tissue_
 
 ## Project Structure
 ```
