@@ -106,6 +106,10 @@ if __name__ == "__main__":
     y = y[0:img.shape[0],0:img.shape[1]]
             
     print('Saving')
+    #Raw Prediction
+    plt.imsave(filename+"_prediction_"+conf.run_name+".png",y,cmap="gray")
+
+    '''#Figure with input and raw prediction
     fig, plots = plt.subplots(nrows = 1, ncols=2, figsize=(20, 10))
     images = [img, y]
     titles = ["Image", "output"]
@@ -117,10 +121,11 @@ if __name__ == "__main__":
     plt.savefig(filename+"_output_no_postprocess.png")
     plt.close(fig)
 
+    #Figure with input and prediction after post processing
     fig, plots = plt.subplots(nrows = 1, ncols=2, figsize=(20, 10))
-    '''y = (y > 0.8)
+    y = (y > 0.8)
     y = remove_small_objects(y, 30000).astype(int)
-    y = dilation(y, square(15)).astype(int)'''
+    y = dilation(y, square(15)).astype(int)
     images = [img, y]
     titles = ["Image", "output"]
     plt.imsave(filename+"_prediction_"+conf.run_name+".png",y,cmap="gray")
@@ -129,5 +134,5 @@ if __name__ == "__main__":
         graphs.set_title(titles[i], fontsize=20)
         graphs.axis('off')
     plt.savefig(filename+"_output.png")
-    plt.close(fig)
+    plt.close(fig)'''
     print('Done')
