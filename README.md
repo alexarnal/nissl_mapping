@@ -37,26 +37,26 @@ nissl_mapping
 data
 │
 └─── test                           
-|   └─── images                       Location to store *.PNG files.
-|   └─── fx                           Location to store fx labels. The png filename and its corresponding label is same.
-|   └─── gpe                          Location to store gpe labels. The png filename and its corresponding label is same.
-|   └─── av                           Location to store av labels. The png filename and its corresponding label is same.
-|   └─── sch                          Location to store sch labels. The png filename and its corresponding label is same.
-|   └─── ma                           Location to store ma labels. The png filename and its corresponding label is same.
-|   └─── pvt                          Location to store pvt labels. The png filename and its corresponding label is same.
-|   └─── lhaai                        Location to store lhaai labels. The png filename and its corresponding label is same.
+|   └─── images         Location to store *.PNG files.
+|   └─── fx             Location to store fx labels. The png filename and its corresponding label is same.
+|   └─── gpe            Location to store gpe labels. The png filename and its corresponding label is same.
+|   └─── av             Location to store av labels. The png filename and its corresponding label is same.
+|   └─── sch            Location to store sch labels. The png filename and its corresponding label is same.
+|   └─── ma             Location to store ma labels. The png filename and its corresponding label is same.
+|   └─── pvt            Location to store pvt labels. The png filename and its corresponding label is same.
+|   └─── lhaai          Location to store lhaai labels. The png filename and its corresponding label is same.
 |
-└─── train                            Location to store *.PNG files.
-|   └─── images                       Location to store *.PNG files.
-|   └─── fx                           Location to store fx labels. The png filename and its corresponding label is same.
-|   └─── gpe                          Location to store gpe labels. The png filename and its corresponding label is same.
-|   └─── av                           Location to store av labels. The png filename and its corresponding label is same.
-|   └─── sch                          Location to store sch labels. The png filename and its corresponding label is same.
-|   └─── ma                           Location to store ma labels. The png filename and its corresponding label is same.
-|   └─── pvt                          Location to store pvt labels. The png filename and its corresponding label is same.
-|   └─── lhaai                        Location to store lhaai labels. The png filename and its corresponding label is same.
+└─── train              Location to store *.PNG files.
+|   └─── images         Location to store *.PNG files.
+|   └─── fx             Location to store fx labels. The png filename and its corresponding label is same.
+|   └─── gpe            Location to store gpe labels. The png filename and its corresponding label is same.
+|   └─── av             Location to store av labels. The png filename and its corresponding label is same.
+|   └─── sch            Location to store sch labels. The png filename and its corresponding label is same.
+|   └─── ma             Location to store ma labels. The png filename and its corresponding label is same.
+|   └─── pvt            Location to store pvt labels. The png filename and its corresponding label is same.
+|   └─── lhaai          Location to store lhaai labels. The png filename and its corresponding label is same.
 |
-└─── processed                        Location to store train, test, val directories. Created during slice_and_preprocess.
+└─── processed          Location to store train, test, val directories. Created during slice_and_preprocess.
 |
-└─── runs                             Location to store U-Net training runs. Created during unet_train.
+└─── runs               Location to store training runs. Created during unet_train.
 ```
