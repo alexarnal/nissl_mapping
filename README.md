@@ -5,10 +5,12 @@
 ```
 nissl_mapping
 │
-└─── nissl _mapping
+└─── nissl_mapping
+│   │
 │   └───data
 │       │   data.py
 │       │   slice.py
+│   │
 │   └───model
 │       │   frame.py
 │       │   functions.py
@@ -36,7 +38,8 @@ nissl_mapping
 ```
 data
 │
-└─── test                           
+└─── test 
+│   │
 │   └─── images         Location to store *.PNG files.
 │   └─── fx             Location to store fx labels. The png filename and its corresponding label is same.
 │   └─── gpe            Location to store gpe labels. The png filename and its corresponding label is same.
@@ -47,6 +50,7 @@ data
 │   └─── lhaai          Location to store lhaai labels. The png filename and its corresponding label is same.
 │
 └─── train              Location to store *.PNG files.
+│   │
 │   └─── images         Location to store *.PNG files.
 │   └─── fx             Location to store fx labels. The png filename and its corresponding label is same.
 │   └─── gpe            Location to store gpe labels. The png filename and its corresponding label is same.
