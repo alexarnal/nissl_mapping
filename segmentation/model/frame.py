@@ -13,10 +13,13 @@ training step can be concisely called with a single method.
 from .unet import *
 from .metrics import *
 
+import sys
 import numpy as np
 import os, pdb, torch
 from pathlib import Path
 from torch.optim.lr_scheduler import ReduceLROnPlateau, ExponentialLR
+
+import segmentation_models_pytorch as smp
 
 class Framework:
     """
@@ -38,7 +41,32 @@ class Framework:
         self.multi_class = True if model_opts.args.outchannels > 1 else False
         self.num_classes = model_opts.args.outchannels    
         self.loss_fn = None if loss_fn==None else loss_fn.to(self.device)
-        self.model = Unet(**model_opts.args).to(self.device)
+        if model_opts.args.architecture == 'unet':
+            self.model = Unet(
+                inchannels=model_opts.args.inchannels,
+                outchannels=model_opts.args.outchannels,
+                net_depth=model_opts.args.net_depth,
+                dropout=model_opts.args.dropout,
+                spatial=model_opts.args.spatial,
+                first_channel_output=model_opts.args.first_channel_output,
+                output_act=model_opts.args.output_act
+                ).to(self.device)
+        elif model_opts.args.architecture == 'manet':
+            self.model = smp.MAnet(
+                encoder_name='resnet18', 
+                encoder_depth=model_opts.args.net_depth, 
+                encoder_weights=None, 
+                decoder_use_batchnorm=True,
+                # decoder_attention_type=None,
+                decoder_channels=(2, 2, 2, 2), 
+                in_channels=model_opts.args.inchannels, 
+                classes=model_opts.args.outchannels,
+                activation=model_opts.args.output_act,
+                # aux_params=dict(dropout=0.1, classes=model_opts.args.outchannels, activation=None)
+                ).to(self.device)
+        else:
+            sys.exit("Model must be defined!")
+
         optimizer_def = getattr(torch.optim, optimizer_opts["name"])
         self.optimizer = optimizer_def(self.model.parameters(), **optimizer_opts["args"])
         self.lrscheduler = ReduceLROnPlateau(self.optimizer, "min",

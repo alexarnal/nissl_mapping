@@ -54,7 +54,7 @@ if __name__ == "__main__":
     img = mpimg.imread(img_path) #need to add verifyChannelSize()
     _img = verifyDims(img, conf["window_size"])
     #loss_fn = fn.get_loss(conf.model_opts.args.outchannels)    
-    print(f'Creating Unet Instance')    
+    print(f'Creating {conf.model_opts.args.architecture} Instance')    
     frame = Framework(
         #loss_fn = loss_fn,
         model_opts=conf.model_opts,

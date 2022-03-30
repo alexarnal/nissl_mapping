@@ -1,13 +1,13 @@
-device: 1 #cuda 0 1 2 3 cpu
-data_dir: "/data/alex/original_torch"
-class_name: "Fornix"
+device: 0 #cuda 0 1 2 3 cpu
+data_dir: "/data/alex/original_torch" #'/data/alex/PHAL' #
+class_name: "Fornix" #"PHAL"
 batch_size: 8
-run_name: "alex_testing_2.4"
+run_name: "fx" #"PHAL_3"
 epochs: 151
 save_every: None
 use_channels: [0,1,2]
 loss_opts:
-  name: "custom"
+  name: "unified"
   masked: True
   weights: [0.2, 0.8]
   label_smoothing: 0.1
@@ -19,13 +19,14 @@ model_opts:
     dropout: 0.2
     spatial: True
     first_channel_output: 16
-    output_act: 'sigmoid' #works with 'softmax' and 'sigmoid' and None
+    output_act: 'softmax' #works with 'softmax' and 'sigmoid' and None
+    architecture: 'unet' #works with 'unet' and 'manet'
 optim_opts:
   name: "Adam"
   args:
     lr: 0.0001
 log_opts:
-  mask_names: ["Greymatter", "Fornix"]
+  mask_names: ["Background", "Brain Region"]
 metrics_opts: ["IoU", "precision", "recall"]
 grad_accumulation_steps: None
 fine_tune: False

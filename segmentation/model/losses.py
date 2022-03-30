@@ -13,7 +13,7 @@ from torchvision.ops import sigmoid_focal_loss
 class unified(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.weight = 0.5
+        self.weight = 0.2 #works well with 0.5, but 0.0 did get the largest iou
         self.delta = 0.6
         self.gamma = 0.5
         self.label_smoothing = 0.1
